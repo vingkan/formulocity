@@ -4,7 +4,6 @@ logs
 npm-debug.log*
 
 # Compiled code
-dist/
 
 # Runtime data
 pids
