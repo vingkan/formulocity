@@ -10,8 +10,8 @@ module.exports = function GameViz(params) {
 
 	const GRID_SCALE = desired_height / world_height;
 	const GRID_STEP = 5;
-	const DT = params.dt || 0.5;
-	const T_STEP = params.step || 25;
+	const DT = params.dt// || 0.5;
+	const T_STEP = params.step// || 25;
 	const PLAYER_OFFSET = 1.5;
 	
 	let finalCallback;
@@ -139,11 +139,11 @@ module.exports = function GameViz(params) {
 					y: y
 				}
 				if (obj.isPlayer) {
-					console.log(yStart)
+					//console.log(yStart)
 					let nX = scaler.getX({x: 't'}, {t: params.t})
 					let nY = scaler.getY({y: currentPlayerFormula}, {x: params.t - lastChangeTime});// - yStart;//scaleSize(10)
 					yStart = 0;
-					console.log(nY)
+					//console.log(nY)
 					attr = {
 						x: nX,
 						y: nY// + yStart
@@ -293,12 +293,14 @@ module.exports = function GameViz(params) {
 			});
 		}
 	}
+
+	let s;
 	
 	return {
 
 		init () {
 
-			let s = Snap(params.output);
+			s = Snap(params.output);
 
 			s.attr({
 				width: GRID_SCALE * world_width,
@@ -441,6 +443,11 @@ module.exports = function GameViz(params) {
 
 		onEnd (callback) {
 			finalCallback = callback;
+		},
+
+		clear () {
+			playing = false;
+			s.clear();
 		}
 
 	}

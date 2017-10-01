@@ -63,7 +63,7 @@ module.exports = function MathField() {
 
       const latex = math.parse(value).toTex({ parenthesis: 'keep', implicit: 'show' })
       const elem = MathJax.Hub.getAllJax(render)[0]
-      //MathJax.Hub.Queue(['Text', elem, latex])
+      MathJax.Hub.Queue(['Text', elem, latex])
       //MathJax.Hub.Queue(['Typeset', MathJax.Hub, render])
     },
 

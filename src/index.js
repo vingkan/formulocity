@@ -239,6 +239,16 @@ const STAGE = {
 
 const mathField = MathField()
 
+let demo = GameViz({
+	output: '#svg',
+	stage: STAGE,
+	dt: 0,
+	step: 0,
+	height: 400
+});
+
+demo.init();
+
 let game = GameViz({
 	output: '#svg',
 	stage: STAGE,
@@ -257,20 +267,157 @@ Array.from(document.querySelectorAll('[data-formula]')).forEach((btn) => {
 	});
 });
 
-game.init();
+
+let sb = document.getElementById('start-button')
+sb.addEventListener('click', (e) => {
+	demo.clear();
+	game.init();
+})
+
 game.changePlayerFormula('0');
 
-game.onEnd((results) => {
-	console.log('save this to firebase:', results);
+
+let themData = JSON.parse(`{"actions":[{"type":"spawn","x":0,"y":0},{"type":"formula","t":0,"f":"2"},{"type":"formula","t":10,"f":"x"},{"type":"coin","t":12.5,"value":1,"did":"object-10"},{"type":"coin","t":14.5,"value":1,"did":"object-11"},{"type":"coin","t":16.5,"value":1,"did":"object-12"},{"type":"coin","t":18.5,"value":1,"did":"object-13"},{"type":"coin","t":20.5,"value":1,"did":"object-14"},{"type":"formula","t":24,"f":"10 * sin ((1/4) * x)"},{"type":"formula","t":37.5,"f":"x"},{"type":"obstacle","t":39.5,"did":"object-2"}],"success":false}`);
+
+
+
+let themDiv = document.querySelector('#them');
+
+themData.actions.filter((d) => {
+	return d.type === 'formula';
+}).forEach((d) => {
+
+
+	let node = document.createElement('p');
+
+	node.innerText = `Changed formula to y = ${d.f} at t = ${d.t}.`
+
+	themDiv.appendChild(node);
+
 });
 
-document.body.appendChild(mathField.render())
+function endItAll(results) {
+console.log('save this to firebase:', results);
+	let res = JSON.stringify(results);
+	localStorage.setItem('game_results', res);
+	game.clear();
 
-document.body.appendChild(document.createElement('br'))
+	let myVex = vex.dialog.confirm({
+		message: 'Nice try! Time to reflect on the game.',
+		buttons: [
+			{
+				type: 'button',
+				text: 'Play Again',
+				className: 'vex-dialog-button-primary',
+				click: (e) => {
+					console.log('play again')
+					myVex.close();
+					game = GameViz({
+						output: '#svg',
+						stage: STAGE,
+						dt: 0.5,
+						step: 50,
+						height: 400
+					});
+					game.init();
+					game.onEnd(endItAll);
+				}
+			},
+			{
+				type: 'button',
+				text: 'Go to Reflection',
+				className: 'vex-dialog-button-secondary',
+				click: (e) => {
+					console.log('refl')
+					myVex.close();
 
-const button = document.createElement('button')
-button.textContent = 'Calculate'
+				let re = GameViz({
+					output: '#reflect-svg',
+					stage: STAGE,
+					dt: 0,
+					step: 0,
+					height: 400
+				});
+
+				re.init();
+
+					document.querySelector('#game-div').style.display = 'none';
+					document.querySelector('#reflect-div').style.display = 'block';
+
+				let meDiv = document.querySelector('#me');
+
+				results.actions.filter((d) => {
+					return d.type !== 'spawn';
+				}).forEach((d) => {
+
+
+					let node2 = document.createElement('p');
+
+					let msg2 = ``;
+
+					switch (d.type) {
+						case 'formula':
+							msg2 = `Changed formula to y = ${d.f} at t = ${d.t}.`
+							break;
+						case 'coin':
+							msg2 = `Picked up a coin worth ${d.value} at t = ${d.t}.`
+							break;
+						case 'obstacle':
+							msg2 = `Crashed into an obstacle at t = ${d.t}.`
+							break;
+					}
+
+					node2.innerText = msg2
+
+					meDiv.appendChild(node2);
+
+				});
+
+
+				}
+			}
+		],
+		callback: (val) => {
+			console.log(val)
+		}
+	});
+
+}
+
+game.onEnd((results) => {
+	endItAll(results);
+
+
+});
+
+let toolkit = document.getElementById('toolkit')
+
+let mathOut = document.getElementById('math-out');
+
+mathOut.appendChild(mathField.render())
+
+const button = document.getElementById('calc-button')
+button.textContent = 'Add to Toolkit'
 button.addEventListener('click', () => {
-  console.log(evaluate(mathField.getExpr()))
+  //console.log(evaluate(mathField.getExpr()))
+  let fm = mathField.getExpr()
+  console.log(fm)
+  let b = document.createElement('button');
+  b.classList.add('button')
+  b.classList.add('is-primary')
+  b.classList.add('is-outlined')
+  b.innerText = fm;
+  let parts = fm.split('y = ');
+  let data = parts[parts.length - 1];
+  b.dataset.formula = data;
+  b.addEventListener('click', (e) => {
+		console.log(data)
+		game.changePlayerFormula(data);
+	});
+  toolkit.appendChild(b)
+
 })
-document.body.appendChild(button)
+//mathOut.appendChild(button)
+
+
+
