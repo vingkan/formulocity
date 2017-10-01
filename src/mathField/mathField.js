@@ -45,6 +45,28 @@ module.exports = function MathField() {
       return el
     },
 
+    renderExpr(value, el) {
+      el.className = 'mathField'
+
+      const inputContainer = document.createElement('div')
+      inputContainer.className = 'mathField__inputContainer'
+      el.appendChild(inputContainer)
+
+      const renderContainer = document.createElement('div')
+      renderContainer.className = 'mathField__renderContainer'
+      el.appendChild(renderContainer)
+
+      const render = document.createElement('p')
+      render.className = 'mathField__render'
+      render.textContent = '$$$$'
+      renderContainer.appendChild(render)
+
+      const latex = math.parse(value).toTex({ parenthesis: 'keep', implicit: 'show' })
+      const elem = MathJax.Hub.getAllJax(render)[0]
+      //MathJax.Hub.Queue(['Text', elem, latex])
+      //MathJax.Hub.Queue(['Typeset', MathJax.Hub, render])
+    },
+
     getExpr() {
       return input.value
     }

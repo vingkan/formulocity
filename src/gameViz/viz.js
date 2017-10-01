@@ -12,7 +12,7 @@ module.exports = function GameViz(params) {
 	const GRID_STEP = 5;
 	const DT = params.dt || 0.5;
 	const T_STEP = params.step || 25;
-	const PLAYER_OFFSET = 1;
+	const PLAYER_OFFSET = 1.5;
 	
 	let finalCallback;
 
@@ -26,10 +26,11 @@ module.exports = function GameViz(params) {
 		'balloon': true,
 		'gold_coin': true,
 		'cloud': true,
+		'bird': true,
 		'sprite': true
 	}
 
-	let boost = 0;
+	let yStart = 0;
 	let lastChangeTime = 0;
 	let newPlayerFormula = false;
 	let currentPlayerFormula = '0';
@@ -43,24 +44,13 @@ module.exports = function GameViz(params) {
 	let xL = 0;
 	let yL = 0;
 
-	//let once = true;
+	let once = true;
 
 	let collidedWith = {};
 	let tree = [];
 	let playing = true;
 
 	function initAnimations(params) {
-		if (newPlayerFormula) {
-			lastChangeTime = params.t;
-			boost = xL;
-			currentPlayerFormula = newPlayerFormula;
-			newPlayerFormula = false;
-			tree.push({
-				type: 'formula',
-				t: params.t,
-				f: currentPlayerFormula
-			});
-		}
 		return new Promise((resolveAll, rejectAll) => {
 
 			let objects = params.objects;
@@ -137,12 +127,11 @@ module.exports = function GameViz(params) {
 					y: y
 				}
 				if (obj.isPlayer) {
+					let nX = scaler.getX({x: 't'}, {t: params.t}) - scaleSize(PLAYER_OFFSET)
+					let nY = scaler.getY(getPlayerFormula(), {x: params.t - lastChangeTime})// - scaleSize(PLAYER_OFFSET);
 					attr = {
-						x: scaler.getX({x: 't'}, {t: params.t}) - scaleSize(PLAYER_OFFSET),
-						y: scaler.getY(getPlayerFormula(), {x: params.t - lastChangeTime}) + (boost) - scaleSize(PLAYER_OFFSET)
-					}
-					if (boost > 0) { 
-						boost = 0;
+						x: nX,
+						y: nY
 					}
 					// let m = (attr.y - yL) / (attr.x - xL);
 					// let deg = (Math.atan(m) / (2 * Math.PI)) * 360;
@@ -176,6 +165,20 @@ module.exports = function GameViz(params) {
 				params.t += params.dt;
 				if (params.t < params.max) {
 					if (playing) {
+
+						if (newPlayerFormula) {
+							console.log(xL, yL)
+							yStart = yL;
+							lastChangeTime = params.t;
+							currentPlayerFormula = newPlayerFormula;
+							newPlayerFormula = false;
+							tree.push({
+								type: 'formula',
+								t: params.t,
+								f: currentPlayerFormula
+							});
+						}
+
 						initAnimations(params).then(resolveAll).catch(rejectAll);
 					}
 				} else {
@@ -300,6 +303,9 @@ module.exports = function GameViz(params) {
 				width: GRID_SCALE * world_width,
 				height: GRID_SCALE * world_height
 			});
+
+			console.log('width:', GRID_SCALE * world_width);
+			console.log('height:', GRID_SCALE * world_height);
 
 			let WIDTH = s.node.width.baseVal.value;
 			let HEIGHT = s.node.height.baseVal.value;
@@ -430,6 +436,7 @@ module.exports = function GameViz(params) {
 
 		changePlayerFormula (formulaString) {
 			newPlayerFormula = formulaString;
+			yStart = yL;
 		},
 
 		onEnd (callback) {

@@ -12,8 +12,16 @@ const STAGE = {
 			sprite : 'cloud',
 			x : 25,
 			y : 20,
-			width : 5,
-			height : 3
+			width : 7,
+			height : 5
+
+		},
+		{
+			sprite : 'cloud',
+			x : 29,
+			y : 20,
+			width : 7,
+			height : 5
 
 		},
 		{
@@ -224,10 +232,12 @@ const STAGE = {
 		{
 			value: 175,
 			x: 90,
-			y: 'tan(t)'
+			y: '4*tan(t)'
 		},
 	]
 };
+
+const mathField = MathField()
 
 let game = GameViz({
 	output: '#svg',
@@ -238,8 +248,9 @@ let game = GameViz({
 
 
 Array.from(document.querySelectorAll('[data-formula]')).forEach((btn) => {
+	let formula = btn.dataset.formula;
+	//mathField.renderExpr(formula, btn);
 	btn.addEventListener('click', (e) => {
-		let formula = btn.dataset.formula;
 		console.log(formula)
 		game.changePlayerFormula(formula);
 	});
@@ -252,8 +263,6 @@ game.onEnd((results) => {
 	console.log('save this to firebase:', results);
 });
 
-
-const mathField = MathField()
 document.body.appendChild(mathField.render())
 
 document.body.appendChild(document.createElement('br'))
