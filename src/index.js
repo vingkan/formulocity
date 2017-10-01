@@ -17,11 +17,12 @@ const STAGE = {
 
 		},
 		{
-			sprite : 'building1', //short building
-			x : 24,
+			sprite: 'building1', //short building
+			x : 25,
 			y : -10,
-			width : 15,
-			height : 45
+			width : 10,
+			height : 6,
+			fill: 'red'
 		},
 
 		{
@@ -29,7 +30,8 @@ const STAGE = {
 			x: 39,
 			y: -10,
 			width: 40,
-			height: 60
+			height: 20,
+			fill: 'coral'
 			
 		},
 		{
@@ -37,7 +39,8 @@ const STAGE = {
 			x : 76,
 			y : -10,
 			width : 10,
-			height: 40
+			height: 20,
+			fill: 'purple'
 		},
 
 		{
@@ -45,31 +48,35 @@ const STAGE = {
 			x : 86,
 			y : -10,
 			width : 15,
-			height : 60
+			height : 20,
+			fill: 'lime'
 		},
 		
 		{
 			sprite : 'balloon',
 			x : 60,
 			y : 't',
-			width: 5,
-			height: 5
+			width: 2.5,
+			height: 5,
+			fill: 'green'
 		},
 
 		{
 			sprite : 'balloon',
 			x : 62,
 			y: 't/2',
-			width: 5,
-			height: 5
+			width: 2.5,
+			height: 5,
+			fill: 'green'
 		},
 
 		{
 			sprite : 'balloon',
 			x : 64,
 			y : 't/3',
-			width: 5,
-			height: 5
+			width: 2.5,
+			height: 5,
+			fill: 'green'
 		},
 
 		{
@@ -77,14 +84,16 @@ const STAGE = {
 			x: 50,
 			y: '10 * sin(t)',
 			width: 5,
-			height: 5
+			height: 5,
+			fill: 'blue'
 		},
 		{
 			sprite: 'bird',
 			x: '100 - t',
 			y: '10 * sin(100 - t)',
 			width: 5,
-			height: 5
+			height: 5,
+			fill: 'blue'
 		}
 
 		
@@ -95,35 +104,35 @@ const STAGE = {
 		{
 			value : 1,
 			x : 12,
-			y : 't - 10'
+			y : 2
 
 		},
 
 		{
 			value : 1,
 			x : 14,
-			y : 't - 10'
+			y : 4
 
 		},
 
 		{
 			value : 1,
 			x : 16,
-			y : 't - 10'
+			y : 6
 
 		},
 
 		{
 			value : 1,
 			x : 18,
-			y : 't - 10'
+			y : 8
 
 		},
 
 		{
 			value : 1,
 			x : 20,
-			y : 't - 10'
+			y : 10
 
 		},
 

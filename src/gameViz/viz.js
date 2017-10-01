@@ -10,6 +10,19 @@ module.exports = function GameViz(params) {
 	
 	let finalCallback;
 
+	const SPRITE_MAP = {
+		'building1': true,
+		'building2': true,
+		'building3': true,
+		'building4': true,
+		'building5': true,
+		'building6': true,
+		'balloon': true,
+		'gold_coin': true,
+		'cloud': true,
+		'sprite': true
+	}
+
 	function initAnimations(params) {
 		return new Promise((resolveAll, rejectAll) => {
 			let objects = params.objects;
@@ -35,6 +48,8 @@ module.exports = function GameViz(params) {
 				params.t += params.dt;
 				if (params.t < params.max) {
 					initAnimations(params).then(resolveAll).catch(rejectAll);
+				} else {
+					resolveAll({});
 				}
 			}, params.step);
 			//});
@@ -73,15 +88,9 @@ module.exports = function GameViz(params) {
 				} else {
 					val = data.y;
 				}
-				if (data.height) {
-					val -= data.height;
-				}
 				let n = scaleValue(val, wb.y, vb.y);
-				if (data.height) {
-					//console.log(data.height)
-					//let hS = scaleSize(data.height);
-					//console.log(n, hS)
-					//n -= scaleSize(data.height);
+				if (data.scaledHeight) {
+					n -= data.scaledHeight;
 				}
 				return n;
 			}
@@ -162,22 +171,44 @@ module.exports = function GameViz(params) {
 			thingies.forEach((data) => {
 				let xS = scaler.getX(data, 0);
 				let yS = scaler.getY(data, 0);
+				let wS = 0;
+				let hS = 0;
 				let attr = {
 					x: xS,
 					y: yS
 				}
 				let g;
+
+
+				if (data.fill) {
+					console.log(data)
+					attr.fill = data.fill;
+				}
+
 				if (data.type === 'coin') {
-					let rS = scaleSize(1);
-					g = s.circle(xS, yS, rS).attr(attr);
-				} else {
-					let wS = scaleSize(data.width);
-					let hS = scaleSize(data.height);
+					//let rS = scaleSize(1);
+					//g = s.circle(xS, yS, rS).attr(attr);
+					wS = scaleSize(2);
+					hS = scaleSize(2);
+					data.scaledHeight = hS;
 					attr.width = wS;
 					attr.height = hS;
+					data.sprite = 'gold_coin';
+				} else {
+					wS = scaleSize(data.width);
+					hS = scaleSize(data.height);
+					data.scaledHeight = hS;
+					attr.width = wS;
+					attr.height = hS;
+					
+				}
+				if (data.sprite in SPRITE_MAP) {
+					let src = `../src/img/${data.sprite}.png`;
+					g = s.image(src, xS, yS, wS, hS).attr(attr);	
+				} else {
+					attr.fill = 'black';
 					g = s.rect(xS, yS, wS, hS).attr(attr);
 				}
-				//let g = s.image('cloud.png', 0, 0, 0, 0).attr(attr);
 				
 				objects.push({
 					g: g,
@@ -186,7 +217,7 @@ module.exports = function GameViz(params) {
 				});
 			});
 
-			const T_MAX = 0.2//WORLD.x[1] - WORLD.x[0];
+			const T_MAX = WORLD.x[1] - WORLD.x[0];
 
 			initAnimations({
 				objects: objects,
