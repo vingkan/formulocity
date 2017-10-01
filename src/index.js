@@ -1,4 +1,5 @@
 function SceneManager() {
+  const css = require('./scenes/scene.css')
   const rootEl = document.getElementById('root')
   const onRenderFns = []
 

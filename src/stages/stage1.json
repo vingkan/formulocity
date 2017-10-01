@@ -2,7 +2,7 @@
   "title": "My First Level",
   "background": "white",
   "domain": [
-    0,
+    -10,
     100
   ],
   "range": [
@@ -19,213 +19,182 @@
     },
     {
       "sprite": "building1",
-      "x": 24,
+      "x": 25,
       "y": -10,
-      "width": 15,
-      "height": 45
+      "width": 10,
+      "height": 6,
+      "fill": "red"
     },
     {
       "sprite": "building2",
       "x": 39,
       "y": -10,
       "width": 40,
-      "height": 60
+      "height": 20,
+      "fill": "coral"
     },
     {
       "sprite": "building3",
       "x": 76,
       "y": -10,
       "width": 10,
-      "height": 40
+      "height": 20,
+      "fill": "purple"
     },
     {
       "sprite": "building4",
       "x": 86,
       "y": -10,
       "width": 15,
-      "height": 60
+      "height": 20,
+      "fill": "lime"
     },
     {
       "sprite": "balloon",
       "x": 60,
       "y": "t",
-      "width": 5,
-      "height": 5
+      "width": 2.5,
+      "height": 5,
+      "fill": "green"
     },
     {
       "sprite": "balloon",
       "x": 62,
       "y": "t/2",
-      "width": 5,
-      "height": 5
+      "width": 2.5,
+      "height": 5,
+      "fill": "green"
     },
     {
       "sprite": "balloon",
       "x": 64,
       "y": "t/3",
-      "width": 5,
-      "height": 5
-    },
-    {
-      "sprite": "bird",
-      "x": 50,
-      "y": "10 * sin(t)",
-      "width": 5,
-      "height": 5
+      "width": 2.5,
+      "height": 5,
+      "fill": "green"
     },
     {
       "sprite": "bird",
       "x": "100 - t",
-      "y": "10 * sin(100 - t)",
+      "y": "11 + (5 * sin(t))",
       "width": 5,
-      "height": 5
+      "height": 5,
+      "fill": "blue"
+    },
+    {
+      "sprite": "bird",
+      "x": "0 + t",
+      "y": "11+ (5 * cos(t))",
+      "width": 5,
+      "height": 5,
+      "fill": "blue"
     }
   ],
   "coins": [
     {
       "value": 1,
       "x": 12,
-      "y": "t - 10"
+      "y": 2
     },
     {
       "value": 1,
       "x": 14,
-      "y": "t - 10"
+      "y": 4
     },
     {
       "value": 1,
       "x": 16,
-      "y": "t - 10"
+      "y": 6
     },
     {
       "value": 1,
       "x": 18,
-      "y": "t - 10"
+      "y": 8
     },
     {
       "value": 1,
       "x": 20,
-      "y": "t - 10"
+      "y": 10
     },
     {
       "value": 5,
-      "x": 24,
+      "x": 30,
       "y": 0
-    },
-    {
-      "value": 5,
-      "x": 50,
-      "y": 75
-    },
-    {
-      "value": 10,
-      "x": 36,
-      "y": 20
-    },
-    {
-      "value": 10,
-      "x": 38,
-      "y": 20
-    },
-    {
-      "value": 10,
-      "x": 40,
-      "y": 20
-    },
-    {
-      "value": 10,
-      "x": 42,
-      "y": 18
-    },
-    {
-      "value": 10,
-      "x": 44,
-      "y": 16
-    },
-    {
-      "value": 10,
-      "x": 46,
-      "y": 12
-    },
-    {
-      "value": 10,
-      "x": 48,
-      "y": 12
-    },
-    {
-      "value": 10,
-      "x": 50,
-      "y": 12
-    },
-    {
-      "value": 10,
-      "x": 52,
-      "y": 14
-    },
-    {
-      "value": 10,
-      "x": 54,
-      "y": 16
-    },
-    {
-      "value": 10,
-      "x": 56,
-      "y": 14
     },
     {
       "value": 10,
       "x": 58,
-      "y": 12
+      "y": "(20 + (2* sin(0)))"
     },
     {
       "value": 10,
       "x": 60,
-      "y": 12
+      "y": "(20 + (2* sin(45)))"
     },
     {
       "value": 10,
       "x": 62,
-      "y": 14
+      "y": "(20 + (2* sin(90)))"
     },
     {
       "value": 10,
       "x": 64,
-      "y": 16
+      "y": "(20 + (2* sin(135)))"
     },
     {
       "value": 10,
       "x": 66,
-      "y": 18
+      "y": "(20 + 2* sin(180))"
     },
     {
       "value": 10,
       "x": 68,
-      "y": 20
+      "y": "(20 + (2* sin(225)))"
     },
     {
       "value": 10,
       "x": 70,
-      "y": 20
+      "y": "(20 + (2* sin(270)))"
     },
     {
       "value": 10,
       "x": 72,
-      "y": 20
+      "y": "(20 + (2* sin(315)))"
     },
     {
       "value": 10,
-      "x": 100,
+      "x": 74,
+      "y": "(20 + (2* sin(0)))"
+    },
+    {
+      "value": 10,
+      "x": 76,
+      "y": "(20 + (2* sin(45)))"
+    },
+    {
+      "value": 10,
+      "x": 78,
+      "y": "(20 + (2* sin(90)))"
+    },
+    {
+      "value": 10,
+      "x": 80,
+      "y": "(20 + (2* sin(135)))"
+    },
+    {
+      "value": 10,
+      "x": 82,
+      "y": "(20 + (2* sin(180)))"
+    },
+    {
+      "value": 200,
+      "x": 99,
       "y": "10 * sin(t)"
     },
     {
-      "value": "175-t",
-      "x": "(25 * sin(t)) + 150",
-      "y": 75
-    },
-    {
-      "value": 30,
+      "value": 175,
       "x": 90,
-      "y": 15
+      "y": "tan(t)"
     }
   ]
 }

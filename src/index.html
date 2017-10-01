@@ -7,19 +7,36 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js"></script>
     <style>
         html, body {
+            height: 100%;
+            width: 100%;
             margin: 0;
             padding: 0;
+            background: black;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #root {
-            max-width: 1280px;
+            width: 100%;
+            border-top: 16px solid #696969;
+            border-bottom: 16px solid #696969;
+            background: white;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
             height: auto;
-            margin: 0 auto;
         }
     </style>
   </head>
   <body>
     <div id="root"></div>
+    <script src="../src/scaling.js"></script>
     <script src="../node_modules/snapsvg/dist/snap.svg-min.js"></script>
   </body>
 </html>

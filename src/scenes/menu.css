@@ -1,0 +1,45 @@
+.menuScene__title {
+    margin: 0 auto;
+    max-width: 90%;
+}
+
+@keyframes bounce {
+ 0%, 50%, 100% {transform: translateY(0);}
+ 25% {transform: translateY(-3px);}
+ 75% {transform: translateY(3px);}
+}
+
+.menuScene__startButtonContainer {
+    position: relative;
+    margin: 0 auto;
+    width: 200px;
+}
+.menuScene__startButton {
+    transition: all 0.2s;
+    animation: bounce 2s infinite;
+    animation-timing-function: cubic-bezier(0.6, 0.5, 0.4, 0.5);
+}
+.menuScene__startButton:hover,
+.menuScene__startButton:focus {
+    cursor: pointer;
+}
+.menuScene__startButtonShadow:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 7.5%;
+    bottom: 0px;
+    width: 85%;
+    max-width: 210px;
+    height: 10px;
+    background: transparent;
+    box-shadow: 0px 16px 20px rgba(0,0,0,0.3);
+}
+
+.menuScene__startButton span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
