@@ -10,8 +10,9 @@ module.exports = function GameViz(params) {
 
 	const GRID_SCALE = desired_height / world_height;
 	const GRID_STEP = 5;
-	const DT = 0.1;//params.dt | 0.1;
-	const T_STEP = 50;
+	const DT = params.dt || 0.5;
+	const T_STEP = params.step || 25;
+	const PLAYER_OFFSET = 1;
 	
 	let finalCallback;
 
@@ -28,6 +29,8 @@ module.exports = function GameViz(params) {
 		'sprite': true
 	}
 
+	let boost = 0;
+	let lastChangeTime = 0;
 	let newPlayerFormula = false;
 	let currentPlayerFormula = '0';
 
@@ -37,49 +40,150 @@ module.exports = function GameViz(params) {
 		};
 	}
 
+	let xL = 0;
+	let yL = 0;
+
+	//let once = true;
+
+	let collidedWith = {};
+	let tree = [];
+	let playing = true;
+
 	function initAnimations(params) {
 		if (newPlayerFormula) {
+			lastChangeTime = params.t;
+			boost = xL;
 			currentPlayerFormula = newPlayerFormula;
 			newPlayerFormula = false;
+			tree.push({
+				type: 'formula',
+				t: params.t,
+				f: currentPlayerFormula
+			});
 		}
 		return new Promise((resolveAll, rejectAll) => {
-			
-			objects.forEach((d) => {
-
-			});
 
 			let objects = params.objects;
 			let scaler = params.scaler;
+
 			if (objects.length === 0) {
-				resolveAll(true);
+				playing = false;
+				resolveAll({
+					actions: tree,
+					success: true
+				});
 			}
-			let animations = [];
-			objects.forEach((obj) => {
-				let promise = new Promise((resolve, reject) => {
-					let x = scaler.getX(obj.data, {t: params.t});
-					let y = scaler.getY(obj.data, {t: params.t});
-					let attr = {
-						x: x,
-						y: y
-					}
-					if (obj.isPlayer) {
-						attr = {
-							x: scaler.getX({x: 't'}, {t: params.t}),
-							y: scaler.getY(getPlayerFormula(), {x: params.t})
+			
+			objects.forEach((d, idx) => {
+				let did = `object-${idx}`;
+				let p = {
+					x: xL,
+					y: yL
+				}
+				if (!d.isPlayer) {
+					if (d.data.type === 'coin') {
+						let x = scaler.getX(d.data, {t: params.t});
+						let y = scaler.getY(d.data, {t: params.t});
+						let c = {
+							x: x,
+							y: y
+						}
+						let col = didCollideWithPoint(p, c, scaleSize(2));
+						if (col) {
+							if (!(did in collidedWith)) {
+								//console.log('hit: ', d.data)
+								tree.push({
+									type: 'coin',
+									t: params.t,
+									value: d.data.value || 0,
+									did: did
+								});
+								collidedWith[did] = true;
+							}
+						}
+					} else {
+						let x = scaler.getX(d.data, {t: params.t});
+						let y = scaler.getY(d.data, {t: params.t});
+						let rect = {
+							x: x,
+							y: y,
+							w: scaleSize(d.data.width),
+							h: scaleSize(d.data.height)
+						}
+						let col = didCollideWithRect(p, rect);
+						//console.log(col, p, rect)
+						if (col) {
+							if (!(did in collidedWith)) {
+								//console.log('hit: ', d.data);
+								tree.push({
+									type: 'obstacle',
+									t: params.t,
+									did: did
+								});
+								collidedWith[did] = true;
+							}
 						}
 					}
-					obj.g.animate(attr, params.step);
-				});
-				animations.push(promise);
+				}
+			});
+
+			let animations = [];
+			objects.forEach((obj, idx) => {
+				let did = `object-${idx}`;
+				let x = scaler.getX(obj.data, {t: params.t});
+				let y = scaler.getY(obj.data, {t: params.t});
+				let attr = {
+					x: x,
+					y: y
+				}
+				if (obj.isPlayer) {
+					attr = {
+						x: scaler.getX({x: 't'}, {t: params.t}) - scaleSize(PLAYER_OFFSET),
+						y: scaler.getY(getPlayerFormula(), {x: params.t - lastChangeTime}) + (boost) - scaleSize(PLAYER_OFFSET)
+					}
+					if (boost > 0) { 
+						boost = 0;
+					}
+					// let m = (attr.y - yL) / (attr.x - xL);
+					// let deg = (Math.atan(m) / (2 * Math.PI)) * 360;
+					// let tstr = `r${deg},${xL},${yL}`;
+					// console.log(m, deg, tstr)
+					// obj.g.transform(tstr);
+					params.s.line(xL, yL, attr.x, attr.y).attr({
+						stroke: 'red'
+					});
+					xL = attr.x;
+					yL = attr.y;
+				}
+				if (did in collidedWith) {
+					if (obj.data.type === 'coin') {
+						obj.g.attr({
+							visibility: 'hidden'
+						});
+					} else {
+						playing = false;
+						resolveAll({
+							actions: tree,
+							success: false
+						});
+					}
+				} 
+				obj.g.animate(attr, params.step);
 			});
 
 			//Promise.all(animations).then((done) => {
 			setTimeout(() => {
 				params.t += params.dt;
 				if (params.t < params.max) {
-					initAnimations(params).then(resolveAll).catch(rejectAll);
+					if (playing) {
+						initAnimations(params).then(resolveAll).catch(rejectAll);
+					}
 				} else {
-					resolveAll({});
+					playing = false;
+					resolveAll({
+						actions: tree,
+						success: true
+					});
 				}
 			}, params.step);
 			//});
@@ -165,7 +269,8 @@ module.exports = function GameViz(params) {
 			});
 			s.text(scaleValue(ix, wb.x, vb.x), vb.y[0], ix + '').attr({
 				fill: '#black',
-				fontFamily: 'sans-serif'
+				fontFamily: 'sans-serif',
+				fontSize: scaleSize(2)
 			});
 		}
 		for (let iy = wb.y[0]; iy <= wb.y[1]; iy += opt.step) {
@@ -179,7 +284,8 @@ module.exports = function GameViz(params) {
 			});
 			s.text(vb.x[0], scaleValue(iy, wb.y, vb.y), iy + '').attr({
 				fill: '#black',
-				fontFamily: 'sans-serif'
+				fontFamily: 'sans-serif',
+				fontSize: scaleSize(2)
 			});
 		}
 	}
@@ -224,8 +330,8 @@ module.exports = function GameViz(params) {
 				sprite: 'sprite',
 				x: 0,
 				y: 0,
-				width: 2,
-				height: 2
+				width: 2 * PLAYER_OFFSET,
+				height: 2 * PLAYER_OFFSET
 			}
 
 			let thingies = [];
@@ -279,6 +385,16 @@ module.exports = function GameViz(params) {
 					attr.fill = 'black';
 					g = s.rect(xS, yS, wS, hS).attr(attr);
 				}
+
+				if (data.type === 'player') {
+					xL = xS;
+					yL = yS;
+					tree.push({
+						type: 'spawn',
+						x: 0,
+						y: 0
+					});
+				}
 				
 				objects.push({
 					g: g,
@@ -294,20 +410,19 @@ module.exports = function GameViz(params) {
 			});
 
 			const T_MAX = WORLD.x[1] - WORLD.x[0];
-			console.log(T_MAX)
+			//console.log(T_MAX)
 
 			initAnimations({
+				s: s,
 				objects: objects,
 				scaler: scaler,
 				t: 0,
 				dt: DT,
 				step: T_STEP,
 				max: T_MAX
-			}).then((done) => {
+			}).then((results) => {
 				if (finalCallback) {
-					finalCallback({
-						actions: []
-					});
+					finalCallback(results);
 				}
 			});
 

@@ -81,7 +81,7 @@ const STAGE = {
 
 		{
 			sprite: 'bird',//updated
-			x: '50 - t',
+			x: '100 - t',
 			y: '11 + (5 * sin(t))',
 			width: 5,
 			height: 5,
@@ -89,7 +89,7 @@ const STAGE = {
 		},
 		{
 			sprite: 'bird', //updated
-			x: 0,
+			x: '0 + t',
 			y: '11+ (5 * cos(t))',
 			width: 5,
 			height: 5,
@@ -144,97 +144,81 @@ const STAGE = {
 
 		},
 
-		{
-			value : 10,
-			x : 50,
-			y : '(15 + 2* sin(0))'
-		},
-
-
-		{
-			value : 10,
-			x : 52,
-			y :  '(15 + 2* sin(90))'
-		},
-
-
-		{
-			value : 10,
-			x : 54,
-			y :'(15 + 2* sin(180))'
-		},
-
-		{
-			value : 10,
-			x : 56,
-			y : '(15 + 2* sin(270))'
-		},
+		
 		{
 			value : 10,
 			x : 58,
-			y : '(15 + 2* sin(0))'
+			y : '(20 + (2* sin(0)))'
 		},
 
-		{
+    {
 			value : 10,
 			x : 60,
-			y : '(15 + 2* sin(90))'
+			y : '(20 + (2* sin(45)))'
 		},
+    	
 		{
 			value : 10,
 			x : 62,
-			y : '(15 + 2* sin(180))'
+			y : '(20 + (2* sin(90)))'
 		},
-		{
+    {
 			value : 10,
 			x : 64,
-			y : '(15 + 2* sin(270))'
+			y : '(20 + (2* sin(135)))'
 		},
 		{
 			value : 10,
 			x : 66,
-			y : '(15 + 2* sin(0))'
+			y : '(20 + 2* sin(180))'
 		},
-		{
+    {
 			value : 10,
 			x : 68,
-			y : '(15 + 2* sin(90))'
+			y : '(20 + (2* sin(225)))'
 		},
-		{
+    {
 			value : 10,
 			x : 70,
-			y : '(15 + 2* sin(180))'
+			y : '(20 + (2* sin(270)))'
 		},
+    
 		{
 			value : 10,
 			x : 72,
-			y : '(15 + 2* sin(270))'
+			y : '(20 + (2* sin(315)))'
 		},
+    
 		{
 			value : 10,
 			x : 74,
-			y : '(15 + 2* sin(0))'
+			y : '(20 + (2* sin(0)))'
 		},
-		{
+    {
 			value : 10,
 			x : 76,
-			y : '(15 + 2* sin(360))'
+			y : '(20 + (2* sin(45)))'
 		},
+    
 		{
 			value : 10,
 			x : 78,
-			y : '(15 + 2* sin(90))'
+			y : '(20 + (2* sin(90)))'
 		},
 		{
 			value : 10,
 			x : 80,
-			y : '(15 + 2* sin(180))'
+			y : '(20 + (2* sin(135)))'
 		},
-
+		{
+			value : 10,
+			x : 82,
+			y : '(20 + (2* sin(180)))'
+		},
 
 		{
 			value: 200,
-			x: 100,
+			x: 99,
 			y: '10 * sin(t)'
 		},
 		{
@@ -242,22 +226,27 @@ const STAGE = {
 			x: 90,
 			y: 'tan(t)'
 		},
-
 	]
 };
 
 let game = GameViz({
 	output: '#svg',
 	stage: STAGE,
-	dt: 1
+	dt: 0.5,
+	step: 50
+});
+
+
+Array.from(document.querySelectorAll('[data-formula]')).forEach((btn) => {
+	btn.addEventListener('click', (e) => {
+		let formula = btn.dataset.formula;
+		console.log(formula)
+		game.changePlayerFormula(formula);
+	});
 });
 
 game.init();
-game.changePlayerFormula('10 * sin(x)');
-
-// btn.addEventListener('click', (e) => {
-// 	game.changePlayerFormula('sin(x)');
-// });
+game.changePlayerFormula('2');
 
 game.onEnd((results) => {
 	console.log('save this to firebase:', results);
