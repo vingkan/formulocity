@@ -51,6 +51,18 @@ module.exports = function GameViz(params) {
 	let playing = true;
 
 	function initAnimations(params) {
+			if (newPlayerFormula) {
+				//console.log(xL, yL)
+				yStart = yL;
+				lastChangeTime = params.t;
+				currentPlayerFormula = newPlayerFormula;
+				newPlayerFormula = false;
+				tree.push({
+					type: 'formula',
+					t: params.t,
+					f: currentPlayerFormula
+				});
+			}
 		return new Promise((resolveAll, rejectAll) => {
 
 			let objects = params.objects;
@@ -127,11 +139,14 @@ module.exports = function GameViz(params) {
 					y: y
 				}
 				if (obj.isPlayer) {
-					let nX = scaler.getX({x: 't'}, {t: params.t}) - scaleSize(PLAYER_OFFSET)
-					let nY = scaler.getY(getPlayerFormula(), {x: params.t - lastChangeTime})// - scaleSize(PLAYER_OFFSET);
+					console.log(yStart)
+					let nX = scaler.getX({x: 't'}, {t: params.t})
+					let nY = scaler.getY({y: currentPlayerFormula}, {x: params.t - lastChangeTime});// - yStart;//scaleSize(10)
+					yStart = 0;
+					console.log(nY)
 					attr = {
 						x: nX,
-						y: nY
+						y: nY// + yStart
 					}
 					// let m = (attr.y - yL) / (attr.x - xL);
 					// let deg = (Math.atan(m) / (2 * Math.PI)) * 360;
@@ -142,7 +157,7 @@ module.exports = function GameViz(params) {
 						stroke: 'red'
 					});
 					xL = attr.x;
-					yL = attr.y;
+					yL = nY//attr.y;
 				}
 				if (did in collidedWith) {
 					if (obj.data.type === 'coin') {
@@ -165,20 +180,6 @@ module.exports = function GameViz(params) {
 				params.t += params.dt;
 				if (params.t < params.max) {
 					if (playing) {
-
-						if (newPlayerFormula) {
-							console.log(xL, yL)
-							yStart = yL;
-							lastChangeTime = params.t;
-							currentPlayerFormula = newPlayerFormula;
-							newPlayerFormula = false;
-							tree.push({
-								type: 'formula',
-								t: params.t,
-								f: currentPlayerFormula
-							});
-						}
-
 						initAnimations(params).then(resolveAll).catch(rejectAll);
 					}
 				} else {
@@ -436,7 +437,6 @@ module.exports = function GameViz(params) {
 
 		changePlayerFormula (formulaString) {
 			newPlayerFormula = formulaString;
-			yStart = yL;
 		},
 
 		onEnd (callback) {

@@ -24,14 +24,14 @@ const STAGE = {
 			height : 5
 
 		},
-		{
+		/*{
 			sprite: 'building1', //short building
 			x : 25,
 			y : -10,
 			width : 10,
 			height : 6,
 			fill: 'red'
-		},
+		},*/
 
 		{
 			sprite: 'building2', //dome
@@ -243,7 +243,8 @@ let game = GameViz({
 	output: '#svg',
 	stage: STAGE,
 	dt: 0.5,
-	step: 50
+	step: 50,
+	height: 400
 });
 
 
@@ -257,7 +258,7 @@ Array.from(document.querySelectorAll('[data-formula]')).forEach((btn) => {
 });
 
 game.init();
-game.changePlayerFormula('2');
+game.changePlayerFormula('0');
 
 game.onEnd((results) => {
 	console.log('save this to firebase:', results);
