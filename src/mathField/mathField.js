@@ -5,7 +5,7 @@ const math = require('mathjs')
 const css = require('./mathField.css')
 
 /* Component */
-module.exports = function MathField() {
+module.exports = function MathField({ parenthesis = 'keep', implicit = 'show' } = {}) {
   let input
 
   return {
@@ -32,7 +32,7 @@ module.exports = function MathField() {
 
       input.addEventListener('input', () => {
         try {
-          const latex = math.parse(input.value).toTex({ parenthesis: 'keep', implicit: 'show' })
+          const latex = math.parse(input.value).toTex({ parenthesis, implicit })
           const elem = MathJax.Hub.getAllJax(render)[0]
           MathJax.Hub.Queue(['Text', elem, latex])
         } catch (err) {

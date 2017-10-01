@@ -22,7 +22,8 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "domify": "1.4.0",
     "mathjs": "3.16.3",
-    "mathquill": "0.10.1-a"
+    "snapsvg": "0.5.1"
   }
 }

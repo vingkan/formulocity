@@ -2,15 +2,46 @@ const { evaluate } = require('../lib/evaluate');
 
 module.exports = function GameViz(params) {
 
-	const GRID_SCALE = 10;
-	const DT = 0.1;
-	const T_STEP = 50;
-	
 	const stage = params.stage;
+
+	let desired_height = params.height || 300;
+	let world_width = (stage.domain[1] - stage.domain[0]);
+	let world_height = (stage.range[1] - stage.range[0]);
+
+	const GRID_SCALE = desired_height / world_height;
+	const GRID_STEP = 5;
+	const DT = 0.1;//params.dt | 0.1;
+	const T_STEP = 50;
 	
 	let finalCallback;
 
+	const SPRITE_MAP = {
+		'building1': true,
+		'building2': true,
+		'building3': true,
+		'building4': true,
+		'building5': true,
+		'building6': true,
+		'balloon': true,
+		'gold_coin': true,
+		'cloud': true,
+		'sprite': true
+	}
+
+	let newPlayerFormula = false;
+	let currentPlayerFormula = '0';
+
+	function getPlayerFormula(t) {
+		return {
+			y: currentPlayerFormula
+		};
+	}
+
 	function initAnimations(params) {
+		if (newPlayerFormula) {
+			currentPlayerFormula = newPlayerFormula;
+			newPlayerFormula = false;
+		}
 		return new Promise((resolveAll, rejectAll) => {
 			let objects = params.objects;
 			let scaler = params.scaler;
@@ -20,11 +51,17 @@ module.exports = function GameViz(params) {
 			let animations = [];
 			objects.forEach((obj) => {
 				let promise = new Promise((resolve, reject) => {
-					let x = scaler.getX(obj.data, params.t);
-					let y = scaler.getY(obj.data, params.t);
+					let x = scaler.getX(obj.data, {t: params.t});
+					let y = scaler.getY(obj.data, {t: params.t});
 					let attr = {
 						x: x,
 						y: y
+					}
+					if (obj.isPlayer) {
+						attr = {
+							x: scaler.getX({x: 't'}, {t: params.t}),
+							y: scaler.getY(getPlayerFormula(), {x: params.t})
+						}
 					}
 					obj.g.animate(attr, params.step);
 				});
@@ -35,6 +72,8 @@ module.exports = function GameViz(params) {
 				params.t += params.dt;
 				if (params.t < params.max) {
 					initAnimations(params).then(resolveAll).catch(rejectAll);
+				} else {
+					resolveAll({});
 				}
 			}, params.step);
 			//});
@@ -56,32 +95,26 @@ module.exports = function GameViz(params) {
 		let wb = params.world;
 		let vb = params.view;
 		return {
-			getX (data, t) {
+			getX (data, payload) {
 				let val;
 				if (typeof data.x === 'string') {
-					val = evaluate(data.x, {t});
+					val = evaluate(data.x, payload);
 				} else {
 					val = data.x;
 				}
 				let n = scaleValue(val, wb.x, vb.x);
 				return n;
 			},
-			getY (data, t) {
+			getY (data, payload) {
 				let val;
 				if (typeof data.y === 'string') {
-					val = evaluate(data.y, {t});
+					val = evaluate(data.y, payload);
 				} else {
 					val = data.y;
 				}
-				if (data.height) {
-					val -= data.height;
-				}
 				let n = scaleValue(val, wb.y, vb.y);
-				if (data.height) {
-					//console.log(data.height)
-					//let hS = scaleSize(data.height);
-					//console.log(n, hS)
-					//n -= scaleSize(data.height);
+				if (data.scaledHeight) {
+					n -= data.scaledHeight;
 				}
 				return n;
 			}
@@ -98,6 +131,10 @@ module.exports = function GameViz(params) {
 				stroke: opt.stroke,
 				strokeWidth: ix === 0 ? 4 : 0.25
 			});
+			s.text(scaleValue(ix, wb.x, vb.x), vb.y[0], ix + '').attr({
+				fill: '#black',
+				fontFamily: 'sans-serif'
+			});
 		}
 		for (let iy = wb.y[0]; iy <= wb.y[1]; iy += opt.step) {
 			let line = s.line().attr({
@@ -108,6 +145,10 @@ module.exports = function GameViz(params) {
 				stroke: opt.stroke,
 				strokeWidth: iy === 0 ? 2 : 0.25
 			});
+			s.text(vb.x[0], scaleValue(iy, wb.y, vb.y), iy + '').attr({
+				fill: '#black',
+				fontFamily: 'sans-serif'
+			});
 		}
 	}
 	
@@ -117,9 +158,10 @@ module.exports = function GameViz(params) {
 
 			let s = Snap(params.output);
 
-			let svgOut = document.querySelector('#svg');
-			svgOut.setAttribute('width', GRID_SCALE * (stage.domain[1] - stage.domain[0]));
-			svgOut.setAttribute('height', GRID_SCALE * (stage.range[1] - stage.range[0]));
+			s.attr({
+				width: GRID_SCALE * world_width,
+				height: GRID_SCALE * world_height
+			});
 
 			let WIDTH = s.node.width.baseVal.value;
 			let HEIGHT = s.node.height.baseVal.value;
@@ -136,12 +178,7 @@ module.exports = function GameViz(params) {
 
 			let background = s.rect(0, 0, WIDTH, HEIGHT);
 			background.attr({
-				fill: stage.background
-			});
-
-			drawGridLines(s, WORLD, VIEW, {
-				stroke: '#54BAD1',
-				step: 5
+				fill: '#BEEAF1'
 			});
 
 			let objects = [];
@@ -150,7 +187,16 @@ module.exports = function GameViz(params) {
 				view: VIEW
 			});
 
-			let thingies = [];
+			let player = {
+				type: 'player',
+				sprite: 'sprite',
+				x: 0,
+				y: 0,
+				width: 2,
+				height: 2
+			}
+
+			let thingies = [player];
 			stage.obstacles.forEach((d) => {
 				thingies.push(d);
 			});
@@ -160,33 +206,62 @@ module.exports = function GameViz(params) {
 			});
 
 			thingies.forEach((data) => {
-				let xS = scaler.getX(data, 0);
-				let yS = scaler.getY(data, 0);
+				let xS = scaler.getX(data, {t: 0});
+				let yS = scaler.getY(data, {t: 0});
+				let wS = 0;
+				let hS = 0;
 				let attr = {
 					x: xS,
 					y: yS
 				}
 				let g;
+
+
+				if (data.fill) {
+					console.log(data)
+					attr.fill = data.fill;
+				}
+
 				if (data.type === 'coin') {
-					let rS = scaleSize(1);
-					g = s.circle(xS, yS, rS).attr(attr);
-				} else {
-					let wS = scaleSize(data.width);
-					let hS = scaleSize(data.height);
+					//let rS = scaleSize(1);
+					//g = s.circle(xS, yS, rS).attr(attr);
+					wS = scaleSize(2);
+					hS = scaleSize(2);
+					data.scaledHeight = hS;
 					attr.width = wS;
 					attr.height = hS;
+					data.sprite = 'gold_coin';
+				} else {
+					wS = scaleSize(data.width);
+					hS = scaleSize(data.height);
+					data.scaledHeight = hS;
+					attr.width = wS;
+					attr.height = hS;
+					
+				}
+				if (data.sprite in SPRITE_MAP) {
+					let src = `../src/img/${data.sprite}.png`;
+					g = s.image(src, xS, yS, wS, hS).attr(attr);	
+				} else {
+					attr.fill = 'black';
 					g = s.rect(xS, yS, wS, hS).attr(attr);
 				}
-				//let g = s.image('cloud.png', 0, 0, 0, 0).attr(attr);
 				
 				objects.push({
 					g: g,
 					data: data,
-					isObstacle: true
+					isObstacle: !(data.type === 'player'),
+					isPlayer: data.type === 'player'
 				});
 			});
 
-			const T_MAX = 0.2//WORLD.x[1] - WORLD.x[0];
+			drawGridLines(s, WORLD, VIEW, {
+				stroke: 'white',
+				step: GRID_STEP
+			});
+
+			const T_MAX = WORLD.x[1] - WORLD.x[0];
+			console.log(T_MAX)
 
 			initAnimations({
 				objects: objects,
@@ -206,7 +281,7 @@ module.exports = function GameViz(params) {
 		},
 
 		changePlayerFormula (formulaString) {
-
+			newPlayerFormula = formulaString;
 		},
 
 		onEnd (callback) {

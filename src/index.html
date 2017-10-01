@@ -4,24 +4,22 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../node_modules/mathquill/build/mathquill.css">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML.js"></script>
-    <style type="text/css">
-      
-      #grid-wrapper {
-        width: 100vw;
-        overflow-x: scroll;
-      }
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
 
+        #root {
+            max-width: 1280px;
+            height: auto;
+            margin: 0 auto;
+        }
     </style>
   </head>
   <body>
-    <div id="grid-wrapper">
-      <svg id="svg"></svg>
-    </div>
-    <!-- insert custom HTML here -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="../src/lib/snap.svg.js"></script>
-    <script src="../node_modules/mathquill/build/mathquill.min.js"></script>
+    <div id="root"></div>
+    <script src="../node_modules/snapsvg/dist/snap.svg-min.js"></script>
   </body>
 </html>
