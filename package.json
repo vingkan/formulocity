@@ -1,0 +1,28 @@
+{
+  "name": "eduhacks17",
+  "version": "0.0.0",
+  "description": "EduHacks 2017 Formula Side Scroller",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "babel-core": "6.26.0",
+    "babel-loader": "7.1.2",
+    "babel-preset-env": "1.6.0",
+    "clean-webpack-plugin": "0.1.17",
+    "css-loader": "0.28.7",
+    "html-webpack-plugin": "2.30.1",
+    "on-build-webpack": "0.1.0",
+    "style-loader": "0.18.2",
+    "webpack": "3.6.0"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "mathjs": "3.16.3",
+    "mathquill": "0.10.1-a"
+  }
+}

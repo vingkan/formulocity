@@ -1,0 +1,11 @@
+.mathField {}
+
+.mathField__inputContainer,
+.mathField__renderContainer {
+  padding: 10px;
+  border: 1px solid black;
+}
+
+.mathField__inputContainer {
+  border-bottom: 0;
+}
