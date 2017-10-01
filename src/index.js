@@ -80,17 +80,17 @@ const STAGE = {
 		},
 
 		{
-			sprite: 'bird',
-			x: 50,
-			y: '10 * sin(t)',
+			sprite: 'bird',//updated
+			x: '50 - t',
+			y: '11 + (5 * sin(t))',
 			width: 5,
 			height: 5,
 			fill: 'blue'
 		},
 		{
-			sprite: 'bird',
-			x: '100 - t',
-			y: '10 * sin(100 - t)',
+			sprite: 'bird', //updated
+			x: 0,
+			y: '11+ (5 * cos(t))',
 			width: 5,
 			height: 5,
 			fill: 'blue'
@@ -138,147 +138,122 @@ const STAGE = {
 
 		{
 			value : 5,
-			x : 24,
+			x : 30,
 			y : 0
 
 
 		},
 
 		{
-			value : 5,
-			x: 50,
-			y: 75
-		},
-
-		{
-			value : 10,
-			x : 36,
-			y : 20
-		},
-
-
-		{
-			value : 10,
-			x : 38,
-			y : 20
-		},
-
-
-		{
-			value : 10,
-			x : 40,
-			y : 20
-		},
-
-		{
-			value : 10,
-			x : 42,
-			y : 18
-		},
-		{
-			value : 10,
-			x : 44,
-			y : 16
-		},
-
-		{
-			value : 10,
-			x : 46,
-			y : 12
-		},
-		{
-			value : 10,
-			x : 48,
-			y : 12
-		},
-		{
 			value : 10,
 			x : 50,
-			y : 12
+			y : '(15 + 2* sin(0))'
 		},
+
+
 		{
 			value : 10,
 			x : 52,
-			y : 14
+			y :  '(15 + 2* sin(90))'
 		},
+
+
 		{
 			value : 10,
 			x : 54,
-			y : 16
+			y :'(15 + 2* sin(180))'
 		},
+
 		{
 			value : 10,
 			x : 56,
-			y : 14
+			y : '(15 + 2* sin(270))'
 		},
 		{
 			value : 10,
 			x : 58,
-			y : 12
+			y : '(15 + 2* sin(0))'
 		},
+
 		{
 			value : 10,
 			x : 60,
-			y : 12
+			y : '(15 + 2* sin(90))'
 		},
 		{
 			value : 10,
 			x : 62,
-			y : 14
+			y : '(15 + 2* sin(180))'
 		},
 		{
 			value : 10,
 			x : 64,
-			y : 16
+			y : '(15 + 2* sin(270))'
 		},
 		{
 			value : 10,
 			x : 66,
-			y : 18
+			y : '(15 + 2* sin(0))'
 		},
 		{
 			value : 10,
 			x : 68,
-			y : 20
+			y : '(15 + 2* sin(90))'
 		},
-
 		{
 			value : 10,
 			x : 70,
-			y : 20
+			y : '(15 + 2* sin(180))'
 		},
 		{
 			value : 10,
 			x : 72,
-			y : 20
+			y : '(15 + 2* sin(270))'
+		},
+		{
+			value : 10,
+			x : 74,
+			y : '(15 + 2* sin(0))'
+		},
+		{
+			value : 10,
+			x : 76,
+			y : '(15 + 2* sin(360))'
+		},
+		{
+			value : 10,
+			x : 78,
+			y : '(15 + 2* sin(90))'
+		},
+		{
+			value : 10,
+			x : 80,
+			y : '(15 + 2* sin(180))'
 		},
 
 
 		{
-			value: 10,
+			value: 200,
 			x: 100,
 			y: '10 * sin(t)'
 		},
 		{
-			value: '175-t',
-			x: '(25 * sin(t)) + 150',
-			y: 75
+			value: 175,
+			x: 90,
+			y: 'tan(t)'
 		},
 
-		{
-			value: 30,
-			x : 90,
-			y : 15
-		}
 	]
 };
 
 let game = GameViz({
 	output: '#svg',
-	stage: STAGE
+	stage: STAGE,
+	dt: 1
 });
 
 game.init();
+game.changePlayerFormula('10 * sin(x)');
 
 // btn.addEventListener('click', (e) => {
 // 	game.changePlayerFormula('sin(x)');
