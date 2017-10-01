@@ -1,3 +1,3 @@
 # FORMULOCITY
 
-BITCHES
+learn math
